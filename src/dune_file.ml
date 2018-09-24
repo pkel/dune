@@ -901,7 +901,7 @@ module Library = struct
           ~desc:"the experimental variants feature"
           [ (0, 1) ]
       in
-      Dune_project.Extension.register_no_args
+      Dune_project.Extension.register_simple
         ~experimental:true
         syntax (Dsexp.Of_sexp.return []);
       syntax
@@ -945,7 +945,7 @@ module Library = struct
           ~desc:"experimental feature for building the compiler with dune"
           [ (0, 1) ]
       in
-      Dune_project.Extension.register_no_args
+      Dune_project.Extension.register_simple
         ~experimental:true
         syntax
         (Dsexp.Of_sexp.return []);
@@ -1764,7 +1764,7 @@ module Menhir = struct
   type Stanza.t += T of t
 
   let () =
-    Dune_project.Extension.register_no_args
+    Dune_project.Extension.register_simple
       syntax
       (return [ "menhir", dparse >>| fun x -> [T x] ])
 

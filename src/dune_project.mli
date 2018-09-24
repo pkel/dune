@@ -72,7 +72,9 @@ module Extension : sig
     -> ('a -> Sexp.t)
     -> 'a key
 
-  val register_no_args
+  (** A simple version where the arguments are not used through
+      [find_extension_args]. *)
+  val register_simple
     :  ?experimental:bool
     -> Syntax.t
     -> Stanza.Parser.t list Dsexp.Of_sexp.t
@@ -103,5 +105,6 @@ val append_to_project_file : t -> string -> unit
 val set : t -> ('a, 'k) Dsexp.Of_sexp.parser -> ('a, 'k) Dsexp.Of_sexp.parser
 val get_exn : unit -> (t, 'k) Dsexp.Of_sexp.parser
 
-(** Find arguments passed to (using) *)
+(** Find arguments passed to (using). [None] means that the extension was not
+    written in dune-project. *)
 val find_extension_args : t -> 'a Extension.key -> 'a option

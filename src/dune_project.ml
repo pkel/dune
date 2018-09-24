@@ -238,7 +238,7 @@ module Extension = struct
     Hashtbl.add extensions name (Extension ext);
     key
 
-  let register_no_args ?experimental syntax stanzas =
+  let register_simple ?experimental syntax stanzas =
     let unit_stanzas =
       let%map r = stanzas in
       ((), r)
