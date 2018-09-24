@@ -56,7 +56,7 @@ module Lang : sig
 end
 
 module Extension : sig
-  type 'a key
+  type 'a t
 
   (** [register id parser] registers a new extension. Users will
       enable this extension by writing:
@@ -70,7 +70,7 @@ module Extension : sig
     -> Syntax.t
     -> ('a * Stanza.Parser.t list) Dsexp.Of_sexp.t
     -> ('a -> Sexp.t)
-    -> 'a key
+    -> 'a t
 
   (** A simple version where the arguments are not used through
       [find_extension_args]. *)
@@ -107,4 +107,4 @@ val get_exn : unit -> (t, 'k) Dsexp.Of_sexp.parser
 
 (** Find arguments passed to (using). [None] means that the extension was not
     written in dune-project. *)
-val find_extension_args : t -> 'a Extension.key -> 'a option
+val find_extension_args : t -> 'a Extension.t -> 'a option

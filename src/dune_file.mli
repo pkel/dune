@@ -143,7 +143,7 @@ module Auto_format : sig
 
   val syntax : Syntax.t
 
-  val key : t Dune_project.Extension.key
+  val key : t Dune_project.Extension.t
 end
 
 module Buildable : sig

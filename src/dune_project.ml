@@ -205,22 +205,22 @@ let append_to_project_file t str =
   Project_file_edit.append t.project_file str
 
 module Extension = struct
-  type 'a key = 'a Univ_map.Key.t
+  type 'a t = 'a Univ_map.Key.t
 
-  type 'a p =
+  type 'a poly_info =
     { syntax       : Syntax.t
     ; stanzas      : ('a * Stanza.Parser.t list) Dsexp.Of_sexp.t
     ; experimental : bool
-    ; key          : 'a key
+    ; key          : 'a t
     }
 
-  type t = Extension : 'a p -> t
+  type info = Extension : 'a poly_info -> info
 
   let syntax (Extension e) = e.syntax
   let is_experimental (Extension e) = e.experimental
 
   type instance =
-    { extension  : t
+    { extension  : info
     ; version    : Syntax.Version.t
     ; loc        : Loc.t
     ; parse_args : Stanza.Parser.t list Dsexp.Of_sexp.t -> Stanza.Parser.t list
@@ -244,7 +244,7 @@ module Extension = struct
       ((), r)
     in
     let unit_to_sexp () = Sexp.List [] in
-    let _ : unit key =
+    let _ : unit t =
       register ?experimental syntax unit_stanzas unit_to_sexp
     in
     ()
