@@ -7,5 +7,4 @@ val gen_rules:
   Super_context.t
   -> Dune_file.Auto_format.t
   -> dir:Path.t
-  -> scope:Scope.t
   -> unit

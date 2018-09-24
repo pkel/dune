@@ -216,7 +216,7 @@ module Gen(P : Install_rules.Params) = struct
     match Dune_project.find_extension_args project Auto_format.key with
     | None -> ()
     | Some config ->
-      Format_rules.gen_rules sctx config ~dir ~scope
+      Format_rules.gen_rules sctx config ~dir
 
   (* +-----------------------------------------------------------------+
      | Stanza                                                          |

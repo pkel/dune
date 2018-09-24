@@ -6,12 +6,12 @@ Formatting can be checked using the @fmt target:
   Entering directory 'enabled'
   File "reason_file.rei", line 1, characters 0-0:
   Files _build/default/reason_file.rei and _build/default/reason_file.rei.formatted differ.
+  File "ocaml_file.ml", line 1, characters 0-0:
+  Files _build/default/ocaml_file.ml and _build/default/ocaml_file.ml.formatted differ.
   File "reason_file.re", line 1, characters 0-0:
   Files _build/default/reason_file.re and _build/default/reason_file.re.formatted differ.
   File "ocaml_file.mli", line 1, characters 0-0:
   Files _build/default/ocaml_file.mli and _build/default/ocaml_file.mli.formatted differ.
-  File "ocaml_file.ml", line 1, characters 0-0:
-  Files _build/default/ocaml_file.ml and _build/default/ocaml_file.ml.formatted differ.
   File "subdir/lib.ml", line 1, characters 0-0:
   Files _build/default/subdir/lib.ml and _build/default/subdir/lib.ml.formatted differ.
   [1]
