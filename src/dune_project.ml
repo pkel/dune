@@ -223,7 +223,8 @@ module Extension = struct
     { extension  : info
     ; version    : Syntax.Version.t
     ; loc        : Loc.t
-    ; parse_args : Stanza.Parser.t list Dsexp.Of_sexp.t -> Stanza.Parser.t list
+    ; parse_args : (Univ_map.t * Stanza.Parser.t list) Dsexp.Of_sexp.t ->
+      Univ_map.t * Stanza.Parser.t list
     }
 
   let extensions = Hashtbl.create 32
@@ -277,20 +278,25 @@ module Extension = struct
         let parse_args p =
           let open Dsexp.Of_sexp in
           let dune_project_edited = ref false in
-          parse (enter p) Univ_map.empty (List (Loc.of_pos __POS__, []))
-          |> List.map ~f:(fun (name, p) ->
-            (name,
-             return () >>= fun () ->
-             if not !dune_project_edited then begin
-               dune_project_edited := true;
-               Project_file_edit.append project_file
-                 (Dsexp.to_string ~syntax:Dune
-                    (List [ Dsexp.atom "using"
-                          ; Dsexp.atom name
-                          ; Dsexp.atom (Syntax.Version.to_string version)
-                          ]))
-             end;
-             p))
+          let arg, stanzas =
+            parse (enter p) Univ_map.empty (List (Loc.of_pos __POS__, []))
+          in
+          let result_stanzas =
+            List.map stanzas ~f:(fun (name, p) ->
+              (name,
+               return () >>= fun () ->
+               if not !dune_project_edited then begin
+                 dune_project_edited := true;
+                 Project_file_edit.append project_file
+                   (Dsexp.to_string ~syntax:Dune
+                      (List [ Dsexp.atom "using"
+                            ; Dsexp.atom name
+                            ; Dsexp.atom (Syntax.Version.to_string version)
+                            ]))
+               end;
+               p))
+          in
+          (arg, result_stanzas)
         in
         { extension
         ; version
@@ -404,22 +410,28 @@ let parse ~dir ~lang ~packages ~file =
            ~f:(fun name -> not (String.Map.mem map name))
        in
        let parsing_context = make_parsing_context ~lang ~extensions in
-       let extension_args = ref Univ_map.empty in
-       let is_explicit e =
-         String.Map.mem map @@ Syntax.name @@ Extension.syntax e
-       in
-       let extension_stanzas =
-         List.map extensions ~f:(fun (ext : Extension.instance) ->
-           let extension = ext.extension in
-           let Extension.Extension e = extension in
-           let args =
-             let%map (arg, stanzas) = Dsexp.Of_sexp.set_many parsing_context e.stanzas
+       let extension_args, extension_stanzas =
+         List.fold_left
+           extensions
+           ~init:(Univ_map.empty, [])
+           ~f:(fun (args_acc, stanzas_acc) (instance : Extension.instance) ->
+             let extension = instance.extension in
+             let Extension.Extension e = extension in
+             let is_explicit =
+               String.Map.mem map @@ Syntax.name @@ Extension.syntax extension
              in
-             if is_explicit extension then
-               extension_args := Univ_map.add !extension_args e.key arg;
-             stanzas
-           in
-           ext.parse_args args)
+             let args =
+               let%map (arg, stanzas) = Dsexp.Of_sexp.set_many parsing_context e.stanzas in
+               let new_args_acc =
+                 if is_explicit then
+                   Univ_map.add args_acc e.key arg
+                 else
+                   args_acc
+               in
+               (new_args_acc, stanzas)
+             in
+             let (new_args_acc, stanzas) = instance.parse_args args in
+             (new_args_acc, stanzas::stanzas_acc))
        in
        let stanzas = List.concat (lang.data :: extension_stanzas) in
        { kind = Dune
@@ -429,7 +441,7 @@ let parse ~dir ~lang ~packages ~file =
        ; packages
        ; stanza_parser = Dsexp.Of_sexp.(set_many parsing_context (sum stanzas))
        ; project_file
-       ; extension_args = !extension_args
+       ; extension_args
        })
 
 let load_dune_project ~dir packages =
