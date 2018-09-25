@@ -21,9 +21,9 @@ let add_diff sctx loc ~dir input output =
     (Build.paths [input; output]
      >>>
      Build.action
-     ~dir
-     ~targets:[]
-     action)
+       ~dir
+       ~targets:[]
+       action)
 
 let gen_rules sctx (config : Dune_file.Auto_format.t) ~dir =
   let loc = config.loc in
@@ -68,9 +68,9 @@ let gen_rules sctx (config : Dune_file.Auto_format.t) ~dir =
       | ".mli" -> ocaml Intf
       | ".re"
       | ".rei" when config_includes config Reason ->
-          let exe = resolve_program "refmt" in
-          let args = [Arg_spec.Dep input] in
-          Some (Build.run ~context ~dir ~stdout_to:output exe args)
+        let exe = resolve_program "refmt" in
+        let args = [Arg_spec.Dep input] in
+        Some (Build.run ~context ~dir ~stdout_to:output exe args)
       | _ -> None
     in
 
