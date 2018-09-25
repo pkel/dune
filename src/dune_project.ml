@@ -310,7 +310,7 @@ end
 let make_parsing_context ~(lang : Lang.Instance.t) ~extensions =
   let acc = Univ_map.singleton (Syntax.key lang.syntax) lang.version in
   List.fold_left extensions ~init:acc
-    ~f:(fun acc (ext : Extension.instance) ->
+    ~f:(fun acc ((ext : Extension.instance), _) ->
       Univ_map.add acc (Syntax.key (Extension.syntax ext.extension)) ext.version)
 
 let key =
@@ -404,22 +404,22 @@ let parse ~dir ~lang ~packages ~file =
        Errors.fail loc "Extension %S specified for the second time." name
      | Ok map ->
        let project_file : Project_file.t = { file; exists = true } in
-       let extensions =
-         explicit_extensions @
+       let implicit_extensions =
          Extension.automatic ~project_file
            ~f:(fun name -> not (String.Map.mem map name))
+       in
+       let extensions =
+         List.map ~f:(fun e -> (e, true)) explicit_extensions @
+         List.map ~f:(fun e -> (e, false)) implicit_extensions
        in
        let parsing_context = make_parsing_context ~lang ~extensions in
        let extension_args, extension_stanzas =
          List.fold_left
            extensions
            ~init:(Univ_map.empty, [])
-           ~f:(fun (args_acc, stanzas_acc) (instance : Extension.instance) ->
+           ~f:(fun (args_acc, stanzas_acc) ((instance : Extension.instance), is_explicit) ->
              let extension = instance.extension in
              let Extension.Extension e = extension in
-             let is_explicit =
-               String.Map.mem map @@ Syntax.name @@ Extension.syntax extension
-             in
              let args =
                let%map (arg, stanzas) = Dsexp.Of_sexp.set_many parsing_context e.stanzas in
                let new_args_acc =
