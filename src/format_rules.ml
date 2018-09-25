@@ -40,7 +40,12 @@ let gen_rules sctx (config : Dune_file.Auto_format.t) ~dir =
       (Super_context.file_tree sctx)
       (Path.drop_build_context_exn dir)
   in
-  let resolve_program s = Super_context.resolve_program sctx ~loc:(Some loc) s
+  let programs = Hashtbl.create 3 in
+  let resolve_program program_name =
+    Hashtbl.find_or_add
+      programs
+      ~f:(Super_context.resolve_program sctx ~loc:(Some loc))
+      program_name
   in
   Path.Set.iter files ~f:(fun file ->
     let input_basename = Path.basename file in
