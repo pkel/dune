@@ -13,5 +13,5 @@ let process args ~input ~output =
 
 let () =
   match Sys.argv with
-  | [| _ ; _; input; "-o"; output|] -> process Sys.argv ~input ~output
+  | [| _ ; _; input; "--name"; _; "-o"; output|] -> process Sys.argv ~input ~output
   | _ -> assert false

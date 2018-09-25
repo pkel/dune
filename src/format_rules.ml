@@ -53,6 +53,8 @@ let gen_rules sctx (config : Dune_file.Auto_format.t) ~dir =
           let open Arg_spec in
           [ A (flag_of_kind kind)
           ; Dep input
+          ; A "--name"
+          ; Path file
           ; A "-o"
           ; Target output
           ]

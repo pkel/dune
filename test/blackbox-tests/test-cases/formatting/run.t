@@ -23,7 +23,7 @@ And fixable files can be promoted:
   Promoting _build/default/enabled/ocaml_file.ml.formatted to enabled/ocaml_file.ml.
   Promoting _build/default/enabled/reason_file.re.formatted to enabled/reason_file.re.
   $ cat enabled/ocaml_file.ml
-  Sys.argv: ../../install/default/bin/ocamlformat --impl ocaml_file.ml -o ocaml_file.ml.formatted
+  Sys.argv: ../../install/default/bin/ocamlformat --impl ocaml_file.ml --name ../../../enabled/ocaml_file.ml -o ocaml_file.ml.formatted
   ocamlformat was called on: let  y=()
   $ cat enabled/reason_file.re
   Sys.argv: ../../install/default/bin/refmt reason_file.re
