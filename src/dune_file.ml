@@ -695,14 +695,14 @@ module Auto_format = struct
       [ List [Atom "enabled_for"; enabled_for_to_sexp enabled_for]
       ]
 
-  let dparse =
+  let dparse_args =
     let%map loc = loc
     and enabled_for = record enabled_for_field
     in
     ({loc; enabled_for}, [])
 
   let key =
-    Dune_project.Extension.register syntax dparse to_sexp
+    Dune_project.Extension.register syntax dparse_args to_sexp
 end
 
 module Buildable = struct
