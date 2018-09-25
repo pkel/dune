@@ -10,18 +10,10 @@ let config_includes (config : Dune_file.Auto_format.t) s =
   | Default -> true
   | Only set -> List.mem s ~set
 
-let diff file1 file2 =
-  Action.Diff
-    { optional = false
-    ; mode = Text
-    ; file1
-    ; file2
-    }
-
 let add_diff sctx loc ~dir input output =
   let module SC = Super_context in
   let open Build.O in
-  let action = diff input output in
+  let action = Action.diff input output in
   let alias_conf_name = "fmt" in
   let stamp = ("format-alias", action) in
   let alias = Build_system.Alias.make alias_conf_name ~dir in
