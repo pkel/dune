@@ -690,10 +690,9 @@ module Auto_format = struct
     ; enabled_for : enabled_for
     }
 
-  let to_sexp {loc; enabled_for} =
+  let to_sexp {enabled_for; loc = _} =
     Sexp.List
-      [ List [Atom "loc"; Loc.to_sexp loc]
-      ; List [Atom "enabled_for"; enabled_for_to_sexp enabled_for]
+      [ List [Atom "enabled_for"; enabled_for_to_sexp enabled_for]
       ]
 
   let dparse =
